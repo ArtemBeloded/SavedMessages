@@ -1,0 +1,12 @@
+/* Стили для 4xx ошибок */
+.toast-warning {
+    background-color: yellow !important;
+    color: black;
+  }
+  
+  /* Стили для 5xx ошибок */
+  .toast-error {
+    background-color: red !important;
+    color: white;
+  }
+  

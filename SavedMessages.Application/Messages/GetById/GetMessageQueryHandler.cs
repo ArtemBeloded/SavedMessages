@@ -33,7 +33,14 @@ namespace SavedMessages.Application.Messages.GetById
             var messageResponse = new MessagesResponse(
                 message.Id,
                 message.CreatedInUtc,
-                message.Text);
+                message.Text,
+                message.IsEdited,
+                message.File != null 
+                ? new MessageFileResponse(
+                    message.File.FileName,
+                    message.File.Data,
+                    message.File.ContentType)
+                : null);
 
             return messageResponse;
         }

@@ -11,7 +11,9 @@ namespace SavedMessages.Domain.Users
     {
         void Add(User user);
 
-        Task<bool> Exists(string email);
+        Task<bool> IsExistsByEmail(string email);
+
+        Task<bool> IsExistsById(Guid id);
 
         Task<User?> GetByEmail(string email);
     }

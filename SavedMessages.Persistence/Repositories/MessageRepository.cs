@@ -25,6 +25,7 @@ namespace SavedMessages.Persistence.Repositories
         public Task<Message?> GetByIdAsync(Guid messageId)
         {
             return _context.Messages
+                .Include(f => f.File)
                 .SingleOrDefaultAsync(m => m.Id == messageId);
         }
 

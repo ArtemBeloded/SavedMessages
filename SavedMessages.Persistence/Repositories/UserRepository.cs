@@ -18,9 +18,14 @@ namespace SavedMessages.Persistence.Repositories
             _context.Users.Add(user);
         }
 
-        public async Task<bool> Exists(string email)
+        public async Task<bool> IsExistsByEmail(string email)
         {
             return await _context.Users.AnyAsync(x => x.Email == email);
+        }
+
+        public async Task<bool> IsExistsById(Guid id) 
+        {
+            return await _context.Users.AnyAsync(x => x.Id == id);
         }
 
         public async Task<User?> GetByEmail(string email)

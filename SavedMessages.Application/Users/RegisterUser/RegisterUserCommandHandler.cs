@@ -25,7 +25,7 @@ namespace SavedMessages.Application.Users.RegisterUser
 
         public async Task<Result> Handle(RegisterUserCommand request, CancellationToken cancellationToken) 
         {
-            if (await _userRepository.Exists(request.Email)) 
+            if (await _userRepository.IsExistsByEmail(request.Email)) 
             {
                 return Result.Failure(UserErrors.EmailAlreadyInUse);
             }

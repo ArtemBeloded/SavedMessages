@@ -1,0 +1,71 @@
+  <div class="chat-container">
+
+    <div class="search-box">
+      <div class="input-group">
+        <input type="text" placeholder="Search messages..." [(ngModel)]="searchQuery" />
+        <button (click)="getMessages()">Search</button>
+      </div>
+    </div>
+    
+
+    <div 
+      class="messages-box"
+      *ngIf="messages.length != 0; else noMessages"
+      #messagesContainer
+    >
+      <div 
+        class="message" 
+        *ngFor="let message of messages; let i = index" 
+        (mouseenter)="hoveredMessage = i" 
+        (mouseleave)="hoveredMessage = null"
+      >
+        <p class="message-content">{{ message.text }}</p>
+        <span class="message-date">
+          {{ message.createdDate | date: 'short' }}
+          <span *ngIf="message.isEdited" class="edited-label">edited</span>
+        
+          <span *ngIf="message.messageFile?.fileName" class="file-link">
+            <a [href]="message.messageFile?.url" target="_blank">{{ message.messageFile?.fileName }}</a>
+          </span>
+        </span>
+  
+        <button *ngIf="hoveredMessage === i" (click)="updateMessage(message)" class="update-button"></button>
+        <button *ngIf="hoveredMessage === i" (click)="deleteMessage(message.id)" class="delete-button"></button>
+
+      </div>
+    </div>
+
+    <ng-template #noMessages>
+      <div class="no-messages-box">
+        <h2 class="no-messages-text">No messages yet...</h2>
+        <p class="no-messages-description">Be the first to start the conversation.</p>
+      </div>
+    </ng-template>
+
+    <div class="send-message-box">
+      <button class="emoji-button" (click)="toggleEmojiPicker()">🤡</button>
+      
+      <div class="emoji-picker-container">
+        <emoji-mart 
+          *ngIf="isEmojiPickerVisible" 
+          (emojiClick)="addEmoji($event)">
+        </emoji-mart>
+      </div>
+  
+      <div class="message-input-container">
+        <input type="text" placeholder="Type your message..." [(ngModel)]="newMessage" />
+        
+        <div *ngIf="attachedFile && !newFile" class="file-container">
+          <a [href]="attachedFile.url" target="_blank">{{ attachedFile.fileName }}</a>
+          <button class="remove-file-button" (click)="removeAttachedFile()">✕</button>
+        </div>
+      </div>
+      
+      <div class="custom-file-input-container">
+        <button class="file-button" (click)="fileInput.click()">🖇️</button>
+        <input type="file" (change)="attachFile($event)" #fileInput class="hidden-file-input"/>
+        <span *ngIf="newFileName">{{ newFileName }}</span>
+      </div>
+      <button (click)="sendMessage()">📃</button>
+    </div>
+  </div>

@@ -8,5 +8,7 @@ using System.Threading.Tasks;
 
 namespace SavedMessages.Application.Messages.Get
 {
-    public record GetMessagesQuery(string? SearchTerm) : IRequest<Result<List<MessagesResponse>>>;
+    public record GetMessagesQuery(
+        Guid UserId,
+        string? SearchTerm) : IRequest<Result<List<MessagesResponse>>>;
 }

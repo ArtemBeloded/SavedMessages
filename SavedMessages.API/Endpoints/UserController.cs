@@ -19,7 +19,7 @@ namespace SavedMessages.API.Endpoints
             _sender = sender;
         }
 
-        [HttpPost("register")]
+        [HttpPost("registration")]
         public async Task<IResult> Register([FromBody] RegisterUserRequest request) 
         {
             var command = new RegisterUserCommand(

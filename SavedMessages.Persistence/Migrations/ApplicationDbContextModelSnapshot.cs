@@ -37,7 +37,6 @@ namespace SavedMessages.Persistence.Migrations
                         .HasDefaultValue(false);
 
                     b.Property<string>("Text")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("UserId")
@@ -58,56 +57,23 @@ namespace SavedMessages.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<byte[]>("Data")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
                     b.Property<string>("FileName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FilePath")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("FileSize")
-                        .HasColumnType("bigint");
-
                     b.Property<Guid>("MessageId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MessageId");
+                    b.HasIndex("MessageId")
+                        .IsUnique();
 
                     b.ToTable("MessageFiles");
-                });
-
-            modelBuilder.Entity("SavedMessages.Domain.Messages.MessageImage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ContentType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ImageName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ImagePath")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("ImageSize")
-                        .HasColumnType("bigint");
-
-                    b.Property<Guid>("MessageId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MessageId");
-
-                    b.ToTable("MessageImages");
                 });
 
             modelBuilder.Entity("SavedMessages.Domain.Users.User", b =>
@@ -143,26 +109,15 @@ namespace SavedMessages.Persistence.Migrations
             modelBuilder.Entity("SavedMessages.Domain.Messages.MessageFile", b =>
                 {
                     b.HasOne("SavedMessages.Domain.Messages.Message", null)
-                        .WithMany("Files")
-                        .HasForeignKey("MessageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("SavedMessages.Domain.Messages.MessageImage", b =>
-                {
-                    b.HasOne("SavedMessages.Domain.Messages.Message", null)
-                        .WithMany("Images")
-                        .HasForeignKey("MessageId")
+                        .WithOne("File")
+                        .HasForeignKey("SavedMessages.Domain.Messages.MessageFile", "MessageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("SavedMessages.Domain.Messages.Message", b =>
                 {
-                    b.Navigation("Files");
-
-                    b.Navigation("Images");
+                    b.Navigation("File");
                 });
 #pragma warning restore 612, 618
         }

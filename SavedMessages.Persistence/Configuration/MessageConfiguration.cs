@@ -17,15 +17,9 @@ namespace SavedMessages.Persistence.Configuration
                 .HasKey(x => x.Id);
 
             builder
-                .HasMany(f => f.Files)
+                .HasOne(f => f.File)
                 .WithOne()
-                .HasForeignKey(x => x.MessageId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            builder
-                .HasMany(i => i.Images)
-                .WithOne()
-                .HasForeignKey(x => x.MessageId)
+                .HasForeignKey<MessageFile>(x => x.MessageId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder

@@ -1,10 +1,4 @@
 ﻿using SavedMessages.Domain.Shared;
-using SavedMessages.Domain.Users;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SavedMessages.Domain.Messages
 {
@@ -30,11 +24,9 @@ namespace SavedMessages.Domain.Messages
 
         public bool IsEdited { get; private set; } = false;
 
-        public string Text { get; private set; }
+        public string? Text { get; private set; }
 
-        public ICollection<MessageFile> Files { get; private set; }
-
-        public ICollection<MessageImage> Images { get; private set; }
+        public MessageFile? File { get; private set; }
 
         public static Result<Message> Create(
             Guid userId,
@@ -51,12 +43,29 @@ namespace SavedMessages.Domain.Messages
             return message;
         }
 
+        public Result AttachFile(MessageFile file) 
+        {
+            File = file;
+
+            return Result.Success();
+        }
+
         public Result Update(string text) 
         {
             //Credential verification
 
             IsEdited = true;
             Text = text;
+
+            return Result.Success();
+        }
+
+        public Result RemoveMessageFile() 
+        {
+            if (File is not null) 
+            {
+                File = null;
+            }
 
             return Result.Success();
         }

@@ -22,8 +22,6 @@ namespace SavedMessages.Persistence
 
         public DbSet<MessageFile> MessageFiles { get; set; }
 
-        public DbSet<MessageImage> MessageImages { get; set; }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder) 
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);

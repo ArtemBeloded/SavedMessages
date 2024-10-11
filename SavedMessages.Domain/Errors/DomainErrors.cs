@@ -1,10 +1,4 @@
 ﻿using SavedMessages.Domain.Shared;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SavedMessages.Domain.Errors
 {
@@ -24,16 +18,28 @@ namespace SavedMessages.Domain.Errors
                 "User.Conflict",
                 $"The provided email is not unique");
 
-            //public static Error NotFound(Guid userId) => Error.NotFound(
-            //    "User.NotFound",
-            //    $"User with the identifier {userId} was not found");
+            public static Error NotFoundById(Guid userId) => Error.NotFound(
+                "User.NotFound",
+                $"User with the identifier {userId} was not found");
         }
 
         public static class MessageErrors 
         {
             public static Error NotFoundMessageById(Guid messageId) => Error.NotFound(
                 "Message.NotFound",
-                $"Message with this id {messageId.ToString()} was not found");
+                $"Message with this id {messageId} was not found");
+
+            public static Error IvalidMessageData => Error.Validation(
+                "Message.InvalidData",
+                "Message without content");
+
+            public static Error ExpiredTimeToUpdateDataMessage(Guid messageId) => Error.Conflict(
+                "MessageUpdate.Conflict",
+                $"Time expired unable to update message with {messageId} identifier");
+
+            public static Error ExpiredTimeToDeleteDataMessage(Guid messageId) => Error.Conflict(
+                "MessageDelete.Conflict",
+                $"Time expired unable to delete message with {messageId} identifier");
         }
 
         public static class EmailErrors 

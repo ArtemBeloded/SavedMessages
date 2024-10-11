@@ -38,6 +38,8 @@ namespace SavedMessages.Persistence
 
             services.AddScoped<ITokenProvider, TokenProvider>();
 
+            services.AddScoped<IMessageFileRepository, MessageFileRepository>();
+
             return services;
         }
     }

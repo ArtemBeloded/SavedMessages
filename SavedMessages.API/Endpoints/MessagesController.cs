@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SavedMessages.API.Contracts.Messages;
 using SavedMessages.API.Extensions;
@@ -23,9 +22,9 @@ namespace SavedMessages.API.Endpoints
         }
 
         [HttpPost("addmessage")]
-        public async Task<IResult> AddMessage([FromBody]AddMessageRequest request) 
+        public async Task<IResult> AddMessage([FromForm]AddMessageRequest request) 
         {
-            var command = new CreateMessageCommand(request.UserId, request.Text);
+            var command = new CreateMessageCommand(request.UserId, request.Text, request.File);
 
             Result result = await _sender.Send(command);
 
@@ -34,9 +33,9 @@ namespace SavedMessages.API.Endpoints
 
         [HttpGet]
         //[Authorize]
-        public async Task<IResult> GetMessages(string? searchTerm) 
+        public async Task<IResult> GetMessages(Guid userId, string? searchTerm) 
         {
-            var query = new GetMessagesQuery(searchTerm);
+            var query = new GetMessagesQuery(userId, searchTerm);
 
             Result<List<MessagesResponse>> result = await _sender.Send(query);
 
@@ -56,16 +55,16 @@ namespace SavedMessages.API.Endpoints
         [HttpPut("{id:guid}")]
         public async Task<IResult> UpdateMessage(
             Guid id,
-            [FromBody] UpdateMessageRequest request)
+            [FromForm] UpdateMessageRequest request)
         {
-            var command = new UpdateMessageCommand(id, request.Text);
+            var command = new UpdateMessageCommand(id, request.Text, request.File);
 
             Result result = await _sender.Send(command);
 
             return result.IsSuccess ? Results.Ok() : result.ToProblemDetails();
         }
 
-        [HttpDelete("id:guid")]
+        [HttpDelete("{id:guid}")]
         public async Task<IResult> DeleteMessage(Guid id) 
         {
             var command = new DeleteMessageCommand(id);

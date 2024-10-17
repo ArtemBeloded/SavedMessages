@@ -1,16 +1,11 @@
 ﻿using MediatR;
 using SavedMessages.Domain.Shared;
 using SavedMessages.Domain.Users;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static SavedMessages.Domain.Errors.DomainErrors;
 
 namespace SavedMessages.Application.Users.GetUser
 {
-    internal sealed class GetUserQueryHandler
+    public sealed class GetUserQueryHandler
         : IRequestHandler<GetUserQuery, Result<UserResponse>>
     {
         private readonly IUserRepository _userRepository;

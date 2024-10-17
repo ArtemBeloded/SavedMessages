@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
 using SavedMessages.Domain.Users;
 
 namespace SavedMessages.Persistence.Repositories

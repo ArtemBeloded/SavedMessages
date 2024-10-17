@@ -2,16 +2,15 @@
 using Microsoft.EntityFrameworkCore;
 using SavedMessages.Domain.Messages;
 using SavedMessages.Domain.Shared;
-using System.Linq;
 
 namespace SavedMessages.Application.Messages.Get
 {
-    internal sealed class GetMessagesQueryHanlde
+    public sealed class GetMessagesQueryHandler
         : IRequestHandler<GetMessagesQuery, Result<List<MessagesResponse>>>
     {
         private readonly IMessageRepository _messageRepository;
 
-        public GetMessagesQueryHanlde(IMessageRepository messageRepository)
+        public GetMessagesQueryHandler(IMessageRepository messageRepository)
         {
             _messageRepository = messageRepository;
         }
@@ -25,12 +24,15 @@ namespace SavedMessages.Application.Messages.Get
             if (!string.IsNullOrWhiteSpace(request.SearchTerm)) 
             {
                 messages = messages.Where(m =>
-                m.Text.Contains(request.SearchTerm));
+                m.Text.Contains(request.SearchTerm) ||
+                m.File.FileName.Contains(request.SearchTerm));
             }
 
             messages = messages.OrderByDescending(f => f.CreatedInUtc);
 
             var response = await messages
+                .Skip((request.Page - 1) * request.PageSize)
+                .Take(request.PageSize)
                 .Select(m => new MessagesResponse(
                     m.Id,
                     m.CreatedInUtc,

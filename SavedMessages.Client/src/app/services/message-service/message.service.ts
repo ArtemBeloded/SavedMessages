@@ -14,10 +14,12 @@ export class MessageService{
         this.apiURL = environment.apiURL;
     }
 
-    public getMessages(userId: string, searchQuery: string){
+    public getMessages(userId: string, searchQuery: string, page: number, pageSize: number){
         let params = new HttpParams();
         params = params.append('userId', userId);
         params = params.append('searchTerm', searchQuery);
+        params = params.append('page', page);
+        params = params.append('pageSize', pageSize);
         return this.httpClient.get<Message[]>(this.apiURL + '/api/messages', {params: params});
     }
 

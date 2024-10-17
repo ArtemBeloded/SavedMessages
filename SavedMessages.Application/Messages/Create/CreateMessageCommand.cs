@@ -8,6 +8,4 @@ namespace SavedMessages.Application.Messages.Create
         Guid UserId,
         string Text,
         IFormFile FileData) : IRequest<Result>;
-
-
 }

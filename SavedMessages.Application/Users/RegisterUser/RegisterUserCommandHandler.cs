@@ -1,12 +1,6 @@
 ﻿using MediatR;
-using SavedMessages.Domain.Errors;
 using SavedMessages.Domain.Shared;
 using SavedMessages.Domain.Users;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static SavedMessages.Domain.Errors.DomainErrors;
 
 namespace SavedMessages.Application.Users.RegisterUser

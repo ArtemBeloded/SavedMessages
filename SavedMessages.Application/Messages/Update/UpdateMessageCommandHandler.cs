@@ -7,7 +7,7 @@ using static SavedMessages.Domain.Errors.DomainErrors;
 
 namespace SavedMessages.Application.Messages.Update
 {
-    internal sealed class UpdateMessageCommandHandler
+    public sealed class UpdateMessageCommandHandler
         : IRequestHandler<UpdateMessageCommand, Result>
     {
         private readonly IMessageRepository _messageRepository;

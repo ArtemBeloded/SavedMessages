@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SavedMessages.Domain.Shared
+﻿namespace SavedMessages.Domain.Shared
 {
     public class Result<TValue> : Result
     {

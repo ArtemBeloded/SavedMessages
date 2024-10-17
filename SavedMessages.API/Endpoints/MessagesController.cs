@@ -33,9 +33,9 @@ namespace SavedMessages.API.Endpoints
 
         [HttpGet]
         //[Authorize]
-        public async Task<IResult> GetMessages(Guid userId, string? searchTerm) 
+        public async Task<IResult> GetMessages(Guid userId, string? searchTerm, int page, int pageSize) 
         {
-            var query = new GetMessagesQuery(userId, searchTerm);
+            var query = new GetMessagesQuery(userId, searchTerm, page, pageSize);
 
             Result<List<MessagesResponse>> result = await _sender.Send(query);
 

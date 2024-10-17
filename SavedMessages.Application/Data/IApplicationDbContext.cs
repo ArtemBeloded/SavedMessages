@@ -1,11 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SavedMessages.Domain.Messages;
 using SavedMessages.Domain.Users;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SavedMessages.Application.Data
 {
@@ -16,6 +11,5 @@ namespace SavedMessages.Application.Data
         DbSet<User> Users { get; set; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
-
     }
 }

@@ -11,11 +11,12 @@
     <div 
       class="messages-box"
       *ngIf="messages.length != 0; else noMessages"
-      #messagesContainer
+      (scroll)="onScroll($event)"
     >
       <div 
         class="message" 
-        *ngFor="let message of messages; let i = index" 
+        *ngFor="let message of messages; let i = index"
+        #messageElement
         (mouseenter)="hoveredMessage = i" 
         (mouseleave)="hoveredMessage = null"
       >

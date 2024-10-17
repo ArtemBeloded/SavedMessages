@@ -6,7 +6,7 @@ using static SavedMessages.Domain.Errors.DomainErrors;
 
 namespace SavedMessages.Application.Messages.Delete
 {
-    internal sealed class DeleteMessageCommandHandler
+    public sealed class DeleteMessageCommandHandler
         : IRequestHandler<DeleteMessageCommand, Result>
     {
         private readonly IMessageRepository _messageRepositoty;

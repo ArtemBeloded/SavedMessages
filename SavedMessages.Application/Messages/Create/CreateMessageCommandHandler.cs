@@ -7,7 +7,7 @@ using static SavedMessages.Domain.Errors.DomainErrors;
 
 namespace SavedMessages.Application.Messages.Create
 {
-    internal sealed class CreateMessageCommandHandler
+    public sealed class CreateMessageCommandHandler
         : IRequestHandler<CreateMessageCommand, Result>
     {
         private readonly IMessageRepository _messageRepository;

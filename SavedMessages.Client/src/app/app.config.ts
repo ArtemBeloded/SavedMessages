@@ -11,13 +11,12 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(), 
+    provideHttpClient(),
     provideHttpClient(withInterceptors([errorInterceptorFn])),
     provideToastr({ 
       positionClass: 'toast-top-right',
       timeOut: 3000
     }),
-    provideAnimations(),
-   
+    provideAnimations()
   ]
 };

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../services/user-service/user.service';
 import { Router } from '@angular/router';
@@ -8,11 +8,12 @@ import { UserData } from '../../models/user-model';
 import { Message } from '../../models/messages.model';
 import { PickerComponent } from '@ctrl/ngx-emoji-mart';
 import { MessageFile } from '../../models/message-file.model';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 @Component({
   selector: 'app-message-page',
   standalone: true,
-  imports: [FormsModule, CommonModule, PickerComponent],
+  imports: [FormsModule, CommonModule, PickerComponent, InfiniteScrollModule ],
   templateUrl: './message-page.component.html',
   styleUrl: './message-page.component.scss'
 })
@@ -21,6 +22,11 @@ export class MessageComponent implements OnInit, AfterViewChecked{
   private user: UserData | null = null;
   private isUpdate: boolean = false;
   private editingMessageId = '';
+  private isLoading: boolean = false;
+  private page: number = 1;
+  private pageSize: number = 20;
+  private hasMoreMessages: boolean = true; // Флаг для остановки подгрузки
+
   public messages: Message[] = [];
   public searchQuery: string = '';
   public hoveredMessage: number | null = null;
@@ -46,9 +52,104 @@ export class MessageComponent implements OnInit, AfterViewChecked{
     }
   }
 
+//   ngAfterViewInit(): void {
+//     this.messageElements.changes.subscribe(() => {
+//       setTimeout(() => {
+//         if (this.messagesContainer && this.messagesContainer.nativeElement) {
+//           console.log('Messages container and native element exist');
+//           this.setupObserver();
+//         } else {
+//           console.error('Messages container or native element not available in ngAfterViewInit');
+//         }
+//       }, 0);
+//     });
+// }
+  
+//   @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
+//   @ViewChildren('messageElement') messageElements!: QueryList<ElementRef>; 
+  
+//   private setupObserver(): void {
+//     console.log('from setupObserver');
+
+//     if (!this.messagesContainer || !this.messagesContainer.nativeElement) {
+//         console.error('messagesContainer or nativeElement is not available');
+//         return;
+//     }
+
+//     const observer = new IntersectionObserver((entries) => {
+//         console.log('Entries observed:', entries);
+//         entries.forEach(entry => {
+//             console.log('Observed element isIntersecting:', entry.isIntersecting);
+//             if (entry.isIntersecting && !this.isLoading && this.hasMoreMessages) {
+//                 this.getMessages();
+//             }
+//         });
+//     }, { root: this.messagesContainer.nativeElement, threshold: 0.5 });
+
+//     console.log('Message elements:', this.messageElements);
+
+//     this.messageElements.changes.subscribe(() => {
+//         if (this.messageElements.length > 2) {
+//             const thirdFromLastIndex = this.messageElements.length - 3;
+
+//             if (thirdFromLastIndex >= 0) {
+//                 const thirdFromLastMessage = this.messageElements.toArray()[thirdFromLastIndex];
+//                 if (thirdFromLastMessage) {
+//                     console.log('Third from last message:', thirdFromLastMessage);
+//                     observer.observe(thirdFromLastMessage.nativeElement);
+//                 }
+//             }
+//         }
+//     });
+
+//     // Наблюдение за элементом при первом вызове
+//     if (this.messageElements.length > 2) {
+//         const thirdFromLastIndex = this.messageElements.length - 3;
+//         const thirdFromLastMessage = this.messageElements.toArray()[thirdFromLastIndex];
+//         if (thirdFromLastMessage) {
+//             observer.observe(thirdFromLastMessage.nativeElement);
+//         }
+//     }
+// }
+
+
+// public getMessages(): void {
+//   if (this.isLoading || !this.hasMoreMessages) return;
+
+//   this.isLoading = true;
+//     // Сохраняем текущее положение скролла
+//     const currentScrollTop = this.messagesContainer.nativeElement.scrollTop;
+
+
+//   this.messageService.getMessages(this.user!.id, this.searchQuery, this.page, this.pageSize).subscribe((res: any) => {
+//     const newMessages = res.map((message: any) => new Message(message));
+
+//     if (newMessages.length === 0) {
+//       this.hasMoreMessages = false;
+//     } else {
+//       this.messages = [...this.messages, ...newMessages]; // Сообщения добавляются в начало списка
+//       this.page++;
+//     }
+
+//     this.isLoading = false;
+//     this.messagesContainer.nativeElement.scrollTop = currentScrollTop + (this.messagesContainer.nativeElement.scrollHeight - this.messagesContainer.nativeElement.clientHeight);
+//   });
+// }
+
+public onScroll(event: any) {
+  const offset = event.target.scrollTop + event.target.clientHeight;
+  const height = event.target.scrollHeight;
+  if (offset >= height - 100) {
+    console.log('on scroll activ')
+  }
+}
+
   public getMessages(){
-    this.messageService.getMessages(this.user!.id, this.searchQuery).subscribe((res: any) =>{
-      this.messages = res.map((message: any)=> new Message(message));
+    this.isLoading = true;
+    this.messageService.getMessages(this.user!.id, this.searchQuery, this.page, this.pageSize).subscribe((res: any) =>{
+      const newMessageFromApi = res.map((message: any)=> new Message(message));
+      this.messages = [...this.messages, ...newMessageFromApi];
+      this.isLoading = false;
     });
   }
 
@@ -148,11 +249,23 @@ export class MessageComponent implements OnInit, AfterViewChecked{
     this.newFileName = null;
   }
 
-  
+
+  // public onScroll(event: any){
+  //   const conteiner = event.target;
+  //   const scrollPosition = conteiner.scrollTop;
+
+  //   if(scrollPosition === 0 && !this.isLoading){
+  //     this.page++;
+  //     this.getMessages();
+  //     console.log('from onScroll IF')
+  //   }
+  // }
 
   
 
-  //@ViewChild('messagesContainer') private messagesContainer!: ElementRef;
+  
+
+ 
 
   // ngAfterViewInit() {
   //   console.log('from ngAfterViewInit')

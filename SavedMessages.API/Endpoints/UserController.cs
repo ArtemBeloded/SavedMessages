@@ -52,6 +52,5 @@ namespace SavedMessages.API.Endpoints
 
             return response.IsSuccess ? Results.Ok(response.Value) : response.ToProblemDetails();
         }
-
     }
 }

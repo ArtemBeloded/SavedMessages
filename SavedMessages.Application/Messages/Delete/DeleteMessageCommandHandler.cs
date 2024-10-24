@@ -6,10 +6,11 @@ using static SavedMessages.Domain.Errors.DomainErrors;
 
 namespace SavedMessages.Application.Messages.Delete
 {
-    internal sealed class DeleteMessageCommandHandler
+    public sealed class DeleteMessageCommandHandler
         : IRequestHandler<DeleteMessageCommand, Result>
     {
         private readonly IMessageRepository _messageRepositoty;
+        private const int TimeOfDeleteOpportunityInMinutas = 15;
 
         public DeleteMessageCommandHandler(IMessageRepository messageRepositoty)
         {
@@ -23,6 +24,14 @@ namespace SavedMessages.Application.Messages.Delete
             if(message is null) 
             {
                 return Result.Failure<MessagesResponse>(MessageErrors.NotFoundMessageById(request.MessageId));
+            }
+
+            var dateTimeNow = DateTime.Now;
+            TimeSpan difference = dateTimeNow - message.CreatedInUtc;
+
+            if (difference.TotalMinutes > TimeOfDeleteOpportunityInMinutas)
+            {
+                return Result.Failure(MessageErrors.ExpiredTimeToDeleteDataMessage(message.Id));
             }
 
             _messageRepositoty.Remove(message);

@@ -1,10 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SavedMessages.Domain.Messages;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SavedMessages.Persistence.Repositories
 {
@@ -25,6 +20,7 @@ namespace SavedMessages.Persistence.Repositories
         public Task<Message?> GetByIdAsync(Guid messageId)
         {
             return _context.Messages
+                .Include(f => f.File)
                 .SingleOrDefaultAsync(m => m.Id == messageId);
         }
 

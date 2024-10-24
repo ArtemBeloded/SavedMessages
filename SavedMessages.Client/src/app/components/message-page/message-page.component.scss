@@ -1,0 +1,267 @@
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 86vh;
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+.search-box {
+  margin-bottom: 10px;
+}
+
+.input-group {
+  display: flex;
+}
+
+.input-group input {
+  flex: 1;
+  padding: 5px;
+  font-size: 16px;
+}
+
+.input-group button {
+  margin-left: 10px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+
+.messages-box {
+  display: flex;
+  flex-direction: column-reverse;
+  overflow-y: auto;
+  height: 100%; // Обязательно добавьте высоту
+  flex-grow: 1;
+  padding: 10px;
+  background-color: #f0f0f0;
+  margin-bottom: 10px;
+  min-height: 0;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.messages-box::-webkit-scrollbar {
+  display: none;
+}
+
+.message {
+  position: relative;
+  background-color: white;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  margin: 0 auto 10px auto;
+  padding-right: 60px;
+  transition: background-color 0.3s ease;
+}
+
+.message:hover {
+  background-color: #f9f9f9;
+}
+
+.no-messages-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  background-color: #f5f5f5;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.no-messages-text {
+  font-size: 24px;
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.no-messages-description {
+  font-size: 16px;
+  color: #777;
+  margin-bottom: 0;
+}
+
+.message-content {
+  margin: 0;
+}
+
+.message-date {
+  display: block;
+  font-size: 12px;
+  color: gray;
+  margin-top: 5px;
+  position: relative;
+}
+
+.edited-label {
+  font-size: 12px;
+  color: #999;
+  margin-left: 5px;
+  font-style: italic;
+}
+
+.file-link {
+  margin-left: 10px;
+  font-size: 12px;
+}
+
+.file-link a {
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.delete-button, .update-button {
+  position: absolute;
+  top: 10px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 5px;
+  border-radius: 3px;
+  transition: background-color 0.3s ease;
+}
+
+.delete-button:hover, .update-button:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.delete-button {
+  right: 10px;
+}
+
+.update-button {
+  right: 40px;
+}
+
+.delete-button::before {
+  content: '❌';
+}
+
+.update-button::before {
+  content: '✒️';
+}
+
+.send-message-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background-color: #ffffff;
+  border-top: 1px solid #ddd;
+  position: relative;
+}
+
+.message-input-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.send-message-box input[type="text"] {
+  flex-grow: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 3px;
+}
+
+.send-message-box button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.send-message-box input[type="file"] {
+  width: 150px;
+}
+
+.file-container {
+  margin-top: 3px;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: #666;
+  line-height: 1.2;
+}
+
+.file-container a {
+  text-decoration: none;
+  color: blue;
+  text-decoration: underline;
+  font-size: 12px;
+  padding: 0;
+  margin: 0;
+}
+
+.remove-file-button {
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  color: black;
+  padding: 0;
+  margin: 0;
+  line-height: 1;
+}
+
+.emoji-picker-container {
+  position: absolute;
+  bottom: 50px;
+  left: 10px;
+  z-index: 1000;
+  width: 320px;
+}
+
+emoji-mart {
+  display: block;
+  width: 100%;
+  background-color: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.emoji-mart .emoji-mart-category-list .emoji-mart-category-label {
+  font-size: 16px;
+}
+
+.emoji-mart .emoji-mart-search input {
+  border: 1px solid #ddd;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.custom-file-input-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.file-button {
+  padding: 5px 10px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.hidden-file-input {
+  display: none;
+}
+
+.custom-file-input-container span {
+  font-size: 12px;
+  color: #666;
+}

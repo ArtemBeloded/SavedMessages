@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.IdentityModel.Tokens;
 using SavedMessages.API.Extensions;
 using SavedMessages.Application;
@@ -32,7 +33,11 @@ namespace SavedMessages.API
 
             builder.Services.AddPersistence(builder.Configuration);
             builder.Services.AddApplication();
-            
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            });
+
             var app = builder.Build();
 
             if (app.Environment.IsDevelopment()) 
@@ -40,8 +45,10 @@ namespace SavedMessages.API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
-            app.UseHttpsRedirection();
+
+           app.UseHttpsRedirection();
 
             app.MapControllers();
 

@@ -1,12 +1,6 @@
 ﻿using MediatR;
-using SavedMessages.Domain.Errors;
 using SavedMessages.Domain.Shared;
 using SavedMessages.Domain.Users;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static SavedMessages.Domain.Errors.DomainErrors;
 
 namespace SavedMessages.Application.Users.RegisterUser
@@ -25,7 +19,7 @@ namespace SavedMessages.Application.Users.RegisterUser
 
         public async Task<Result> Handle(RegisterUserCommand request, CancellationToken cancellationToken) 
         {
-            if (await _userRepository.Exists(request.Email)) 
+            if (await _userRepository.IsExistsByEmail(request.Email)) 
             {
                 return Result.Failure(UserErrors.EmailAlreadyInUse);
             }

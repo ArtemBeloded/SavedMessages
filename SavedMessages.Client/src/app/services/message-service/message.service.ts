@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from "@angular/common/http";
+import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { environment } from "../../../enviroment/enviroment";
 import { Message } from "../../models/messages.model";
@@ -20,7 +20,8 @@ export class MessageService{
         params = params.append('searchTerm', searchQuery);
         params = params.append('page', page);
         params = params.append('pageSize', pageSize);
-        return this.httpClient.get<Message[]>(this.apiURL + '/api/messages', {params: params});
+        const myHeaders = new HttpHeaders().set('Authorization', 'bearer ' + localStorage.getItem('userToken') || '');
+        return this.httpClient.get<Message[]>(this.apiURL + '/api/messages', {params: params, headers: myHeaders});
     }
 
     public addNewMessage(newMessage: any){
@@ -28,23 +29,24 @@ export class MessageService{
         formData.append('UserId', newMessage.UserId);
         formData.append('Text', newMessage.Text);
         formData.append('File', newMessage.File);
-        return this.httpClient.post(this.apiURL + '/api/messages/addmessage', formData);
+        const myHeaders = new HttpHeaders().set('Authorization', 'bearer ' + localStorage.getItem('userToken') || '');
+        return this.httpClient.post(this.apiURL + '/api/messages/addmessage', formData, {headers: myHeaders});
     }
 
     public deleteMessage(messageId: string){
-        return this.httpClient.delete(this.apiURL + '/api/messages/' + messageId);
+        const myHeaders = new HttpHeaders().set('Authorization', 'bearer ' + localStorage.getItem('userToken') || '');
+        return this.httpClient.delete(this.apiURL + '/api/messages/' + messageId, {headers: myHeaders});
     }
 
     public updateMessage(messageForUpdate: any){
         const formData = new FormData();
         formData.append('Text', messageForUpdate.Text);
         if (messageForUpdate.File instanceof File) {
-            // Новый файл
             formData.append('File', messageForUpdate.File);
         } else if (messageForUpdate.File && messageForUpdate.File.fileData) {
-            // Старый файл, если он не был заменен
             formData.append('File', new Blob([messageForUpdate.File.fileData]), messageForUpdate.File.fileName);
         }
-        return this.httpClient.put(this.apiURL + '/api/messages/' + messageForUpdate.MessageId, formData);
+        const myHeaders = new HttpHeaders().set('Authorization', 'bearer ' + localStorage.getItem('userToken') || '');
+        return this.httpClient.put(this.apiURL + '/api/messages/' + messageForUpdate.MessageId, formData, {headers: myHeaders});
     }
 }

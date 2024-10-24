@@ -3,7 +3,7 @@ import { inject, Injectable } from "@angular/core";
 import { environment } from "../../../enviroment/enviroment";
 import { LoginUser } from "../../models/login-user.model";
 import { RegistrationUser } from "../../models/registration-user.model";
-import { BehaviorSubject, Observable, Subject } from "rxjs";
+import { Observable, Subject } from "rxjs";
 import { UserData } from "../../models/user-model";
 
 @Injectable({

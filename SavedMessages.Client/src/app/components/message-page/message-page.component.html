@@ -3,7 +3,7 @@
     <div class="search-box">
       <div class="input-group">
         <input type="text" placeholder="Search messages..." [(ngModel)]="searchQuery" />
-        <button (click)="getMessages()">Search</button>
+        <button (click)="getMessagesWithQuery()">Search</button>
       </div>
     </div>
     
@@ -11,6 +11,7 @@
     <div 
       class="messages-box"
       *ngIf="messages.length != 0; else noMessages"
+      #messagesBox
       (scroll)="onScroll($event)"
     >
       <div 
@@ -30,8 +31,8 @@
           </span>
         </span>
   
-        <button *ngIf="hoveredMessage === i" (click)="updateMessage(message)" class="update-button"></button>
-        <button *ngIf="hoveredMessage === i" (click)="deleteMessage(message.id)" class="delete-button"></button>
+        <button *ngIf="hoveredMessage === i && isWithinEditableTime(message)" (click)="updateMessage(message)" class="update-button"></button>
+        <button *ngIf="hoveredMessage === i && isWithinEditableTime(message)" (click)="deleteMessage(message.id)" class="delete-button"></button>
 
       </div>
     </div>

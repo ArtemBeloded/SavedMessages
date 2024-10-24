@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../services/user-service/user.service';
 import { Router } from '@angular/router';
@@ -8,24 +8,23 @@ import { UserData } from '../../models/user-model';
 import { Message } from '../../models/messages.model';
 import { PickerComponent } from '@ctrl/ngx-emoji-mart';
 import { MessageFile } from '../../models/message-file.model';
-import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 @Component({
   selector: 'app-message-page',
   standalone: true,
-  imports: [FormsModule, CommonModule, PickerComponent, InfiniteScrollModule ],
+  imports: [FormsModule, CommonModule, PickerComponent],
   templateUrl: './message-page.component.html',
   styleUrl: './message-page.component.scss'
 })
-export class MessageComponent implements OnInit, AfterViewChecked{
+export class MessageComponent implements OnInit, AfterViewInit{
   
   private user: UserData | null = null;
   private isUpdate: boolean = false;
   private editingMessageId = '';
-  private isLoading: boolean = false;
   private page: number = 1;
   private pageSize: number = 20;
-  private hasMoreMessages: boolean = true; // Флаг для остановки подгрузки
+  private isLoading: boolean = false;
+  private hasMoreMessages: boolean = true;
 
   public messages: Message[] = [];
   public searchQuery: string = '';
@@ -35,6 +34,9 @@ export class MessageComponent implements OnInit, AfterViewChecked{
   public newFile: File | null = null;
   public newFileName: string | null = null;
   public attachedFile: MessageFile | null = null;
+
+  @ViewChild('messagesBox') messagesBox!: ElementRef;
+  @ViewChild('fileInput') fileInput!: ElementRef;
 
   constructor(
     private userService: UserService,
@@ -52,109 +54,27 @@ export class MessageComponent implements OnInit, AfterViewChecked{
     }
   }
 
-//   ngAfterViewInit(): void {
-//     this.messageElements.changes.subscribe(() => {
-//       setTimeout(() => {
-//         if (this.messagesContainer && this.messagesContainer.nativeElement) {
-//           console.log('Messages container and native element exist');
-//           this.setupObserver();
-//         } else {
-//           console.error('Messages container or native element not available in ngAfterViewInit');
-//         }
-//       }, 0);
-//     });
-// }
-  
-//   @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
-//   @ViewChildren('messageElement') messageElements!: QueryList<ElementRef>; 
-  
-//   private setupObserver(): void {
-//     console.log('from setupObserver');
-
-//     if (!this.messagesContainer || !this.messagesContainer.nativeElement) {
-//         console.error('messagesContainer or nativeElement is not available');
-//         return;
-//     }
-
-//     const observer = new IntersectionObserver((entries) => {
-//         console.log('Entries observed:', entries);
-//         entries.forEach(entry => {
-//             console.log('Observed element isIntersecting:', entry.isIntersecting);
-//             if (entry.isIntersecting && !this.isLoading && this.hasMoreMessages) {
-//                 this.getMessages();
-//             }
-//         });
-//     }, { root: this.messagesContainer.nativeElement, threshold: 0.5 });
-
-//     console.log('Message elements:', this.messageElements);
-
-//     this.messageElements.changes.subscribe(() => {
-//         if (this.messageElements.length > 2) {
-//             const thirdFromLastIndex = this.messageElements.length - 3;
-
-//             if (thirdFromLastIndex >= 0) {
-//                 const thirdFromLastMessage = this.messageElements.toArray()[thirdFromLastIndex];
-//                 if (thirdFromLastMessage) {
-//                     console.log('Third from last message:', thirdFromLastMessage);
-//                     observer.observe(thirdFromLastMessage.nativeElement);
-//                 }
-//             }
-//         }
-//     });
-
-//     // Наблюдение за элементом при первом вызове
-//     if (this.messageElements.length > 2) {
-//         const thirdFromLastIndex = this.messageElements.length - 3;
-//         const thirdFromLastMessage = this.messageElements.toArray()[thirdFromLastIndex];
-//         if (thirdFromLastMessage) {
-//             observer.observe(thirdFromLastMessage.nativeElement);
-//         }
-//     }
-// }
-
-
-// public getMessages(): void {
-//   if (this.isLoading || !this.hasMoreMessages) return;
-
-//   this.isLoading = true;
-//     // Сохраняем текущее положение скролла
-//     const currentScrollTop = this.messagesContainer.nativeElement.scrollTop;
-
-
-//   this.messageService.getMessages(this.user!.id, this.searchQuery, this.page, this.pageSize).subscribe((res: any) => {
-//     const newMessages = res.map((message: any) => new Message(message));
-
-//     if (newMessages.length === 0) {
-//       this.hasMoreMessages = false;
-//     } else {
-//       this.messages = [...this.messages, ...newMessages]; // Сообщения добавляются в начало списка
-//       this.page++;
-//     }
-
-//     this.isLoading = false;
-//     this.messagesContainer.nativeElement.scrollTop = currentScrollTop + (this.messagesContainer.nativeElement.scrollHeight - this.messagesContainer.nativeElement.clientHeight);
-//   });
-// }
-
-public onScroll(event: any) {
-  const offset = event.target.scrollTop + event.target.clientHeight;
-  const height = event.target.scrollHeight;
-  if (offset >= height - 100) {
-    console.log('on scroll activ')
+  ngAfterViewInit(): void {
+    this.scrollToBottom();
   }
-}
 
-  public getMessages(){
-    this.isLoading = true;
-    this.messageService.getMessages(this.user!.id, this.searchQuery, this.page, this.pageSize).subscribe((res: any) =>{
-      const newMessageFromApi = res.map((message: any)=> new Message(message));
-      this.messages = [...this.messages, ...newMessageFromApi];
-      this.isLoading = false;
-    });
+  public onScroll(event: any) {
+    const { scrollTop, scrollHeight, clientHeight } = event.target;
+    const isTop = scrollHeight + scrollTop === clientHeight + 1;
+    if (isTop && !this.isLoading && this.hasMoreMessages) {
+      this.page++;
+      this.getMessages(false);
+    }
+  }
+
+  public getMessagesWithQuery(){
+    this.resetMessageForm();
+    this.getMessages(true);
   }
 
   public deleteMessage(messageId: string){
     this.messageService.deleteMessage(messageId).subscribe((res: any)=>{
+      this.resetMessageForm();
       this.getMessages();
     });
   }
@@ -164,7 +84,7 @@ public onScroll(event: any) {
     this.isUpdate = true;
     this.editingMessageId = message.id;
     this.attachedFile = message.messageFile ? message.messageFile : null;
-    this.newFile = null; // Сбрасываем новый файл, если он был
+    this.newFile = null;
   }
 
   public toggleEmojiPicker() {
@@ -180,11 +100,11 @@ public onScroll(event: any) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       this.newFile = input.files[0];
-      this.newFileName = this.newFile.name; // Show the selected file's name
-      this.attachedFile = null; // Скрываем старый файл
+      this.newFileName = this.newFile.name;
+      this.attachedFile = null;
     } else {
       this.newFile = null;
-      this.newFileName = null; // Clear the file name if no file is selected
+      this.newFileName = null;
     }
   }
 
@@ -205,6 +125,37 @@ public onScroll(event: any) {
     }
   }
 
+  public isWithinEditableTime(message: any): boolean {
+    const createdTime = new Date(message.createdDate).getTime();
+    const currentTime = new Date().getTime();
+    const fifteenMinutesInMs = 15 * 60 * 1000;
+
+    return (currentTime - createdTime) <= fifteenMinutesInMs;
+  }
+
+  private getMessages(isScrollToBottom: boolean = true): void {
+    this.isLoading = true;
+
+    this.messageService.getMessages(this.user!.id, this.searchQuery, this.page, this.pageSize).subscribe((res: any) => {
+      const newMessageFromApi = res.map((message: any) => new Message(message));
+      this.messages = [...this.messages, ...newMessageFromApi];
+      this.isLoading = false;
+      this.hasMoreMessages = newMessageFromApi.length === this.pageSize;
+
+      if (isScrollToBottom) {
+        this.scrollToBottom();
+      }
+    });
+  }
+
+  private scrollToBottom(): void {
+    setTimeout(() => {
+      if (this.messagesBox) {
+        this.messagesBox.nativeElement.scrollTop = this.messagesBox.nativeElement.scrollHeight;
+      }
+    }, 0);
+  }
+
   private CreateMessageForSend(){
     var newMsg = {
       UserId: this.user?.id,
@@ -212,74 +163,39 @@ public onScroll(event: any) {
       File: this.newFile
     };
     this.messageService.addNewMessage(newMsg).subscribe((res: any)=>{
-      this.getMessages();
       this.resetMessageForm();
+      this.getMessages(true);
     });
   }
 
   private CreateUpdateMessageForSend(){
-      // Создаем базовый объект для отправки сообщения
-  const updateMsg: any = {
-    MessageId: this.editingMessageId,
-    Text: this.newMessage
-  };
-
-  // Проверяем, что файл прикреплен, и добавляем его в объект
-  if (this.attachedFile instanceof MessageFile) {
-    updateMsg.File = {
-      fileData: this.attachedFile.fileData,
-      fileName: this.attachedFile.fileName
+    const updateMsg: any = {
+      MessageId: this.editingMessageId,
+      Text: this.newMessage
     };
-  } else if (this.newFile) {
-    updateMsg.File = this.newFile;
-  }
+
+    if (this.attachedFile instanceof MessageFile) {
+      updateMsg.File = {
+        fileData: this.attachedFile.fileData,
+        fileName: this.attachedFile.fileName
+      };
+    } else if (this.newFile) {
+      updateMsg.File = this.newFile;
+    }
     this.messageService.updateMessage(updateMsg).subscribe((res: any)=>{
-      this.getMessages();
       this.resetMessageForm();
+      this.getMessages(true);
     });
   }
 
-  @ViewChild('fileInput') fileInput!: ElementRef;
   private resetMessageForm(){
     this.newMessage = '';
     this.isUpdate = false;
     this.editingMessageId = '';
     this.newFile = null;
-    this.fileInput.nativeElement.value = ''; // Очистить input file
+    this.fileInput.nativeElement.value = '';
     this.newFileName = null;
-  }
-
-
-  // public onScroll(event: any){
-  //   const conteiner = event.target;
-  //   const scrollPosition = conteiner.scrollTop;
-
-  //   if(scrollPosition === 0 && !this.isLoading){
-  //     this.page++;
-  //     this.getMessages();
-  //     console.log('from onScroll IF')
-  //   }
-  // }
-
-  
-
-  
-
- 
-
-  // ngAfterViewInit() {
-  //   console.log('from ngAfterViewInit')
-  //   this.scrollToBottom();
-  // }
-
-  // public scrollToBottom(): void {
-  //   if (this.messagesContainer?.nativeElement) {
-  //       console.log(this.messagesContainer?.nativeElement)
-  //       this.messagesContainer.nativeElement.scrollTop = this.messagesContainer.nativeElement.scrollHeight;
-  //   }
-  // }
-
-  ngAfterViewChecked() {
-    // с помощью этого можно попробывать подгружать елементы в массив
+    this.page = 1;
+    this.messages = [];
   }
 }
